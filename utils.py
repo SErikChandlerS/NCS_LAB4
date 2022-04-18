@@ -13,8 +13,9 @@ config = {
 conn = mysql.connector.connect(**config)
 
 def post_in_blog(author, text):
+
+    """to fix the vulnerability use commented code"""
     # from markupsafe import escape
-    # Right way (+ escape)
     # author = author[:128]
     # text = text[:512]
     # author = escape(author)
@@ -23,15 +24,12 @@ def post_in_blog(author, text):
     #     "INSERT INTO feedback (author, text) VALUES (?, ?);",
     #     (author, text)
     # )
-    author = sanitize(author)
-    text = sanitize(text)
-    author = author[:128]
-    text = text[:512]
+    author = reformat(author)
+    text = reformat(text)
     query = "INSERT INTO blog (author, text) VALUES ('{}', '{}');".format(
         author, text
     )
     conn.cursor().executescript(query)
-    print("Saved blog {}: {}".format(author, text))
 
 
 def get_all_blogs():
@@ -40,5 +38,5 @@ def get_all_blogs():
     return cursor.fetchall()
 
 
-def sanitize(s):
+def reformat(s):
     return s.replace("'", "''")
